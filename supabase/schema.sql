@@ -49,6 +49,33 @@ CREATE TABLE daily_lessons (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+-- User profiles and gamification
+CREATE TABLE users (
+  id UUID REFERENCES auth.users ON DELETE CASCADE PRIMARY KEY,
+  email TEXT UNIQUE NOT NULL,
+  full_name TEXT,
+  avatar_url TEXT,
+  total_xp INTEGER DEFAULT 0,
+  current_level INTEGER DEFAULT 1,
+  current_streak INTEGER DEFAULT 0,
+  longest_streak INTEGER DEFAULT 0,
+  last_activity_date DATE,
+  badge TEXT DEFAULT 'Member',
+  is_premium BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- XP transactions for tracking gains/losses
+CREATE TABLE xp_transactions (
+  id SERIAL PRIMARY KEY,
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  xp_amount INTEGER NOT NULL,
+  source TEXT NOT NULL, -- 'daily_login', 'submit_intel', 'complete_lesson', etc.
+  description TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
 -- Insert sample daily lesson
 INSERT INTO daily_lessons (title, content, insights, category) VALUES 
 ('Understanding AI Agent Architecture', 
@@ -60,10 +87,49 @@ INSERT INTO daily_lessons (title, content, insights, category) VALUES
 ALTER TABLE waitlist_entries ENABLE ROW LEVEL SECURITY;
 ALTER TABLE referral_tracking ENABLE ROW LEVEL SECURITY;
 ALTER TABLE daily_lessons ENABLE ROW LEVEL SECURITY;
+ALTER TABLE users ENABLE ROW LEVEL SECURITY;
+ALTER TABLE xp_transactions ENABLE ROW LEVEL SECURITY;
 
 -- Allow public read access to daily lessons
 CREATE POLICY "Allow public read access to daily lessons" ON daily_lessons
   FOR SELECT USING (true);
+
+-- Allow public read access to leaderboard (users table)
+CREATE POLICY "Allow public read access to user leaderboard" ON users
+  FOR SELECT USING (true);
+
+-- Users can only update their own profile
+CREATE POLICY "Users can update own profile" ON users
+  FOR UPDATE USING (auth.uid() = id);
+
+-- Users can view their own XP transactions
+CREATE POLICY "Users can view own XP transactions" ON xp_transactions
+  FOR SELECT USING (auth.uid() = user_id);
+
+-- Function to calculate user level based on XP
+CREATE OR REPLACE FUNCTION calculate_level(xp INTEGER)
+RETURNS INTEGER AS $$
+BEGIN
+  -- Level formula: sqrt(XP / 100) + 1
+  RETURN FLOOR(SQRT(xp / 100.0)) + 1;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Function to update user level when XP changes
+CREATE OR REPLACE FUNCTION update_user_level()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.current_level = calculate_level(NEW.total_xp);
+  NEW.updated_at = NOW();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Trigger to automatically update level when XP changes
+CREATE TRIGGER update_user_level_trigger
+  BEFORE UPDATE OF total_xp ON users
+  FOR EACH ROW
+  EXECUTE FUNCTION update_user_level();
 
 -- DAILY LESSONS
 create table if not exists daily_lessons (

@@ -6,6 +6,7 @@ export default function Home() {
       <div>
         <nav style={{position:'absolute',top:'20px',right:'20px',display:'flex',gap:'20px'}}>
           <Link href="/intelligence" style={{color:'#fff',opacity:.8,textDecoration:'none'}}>Intelligence</Link>
+          <Link href="/leaderboard" style={{color:'#fff',opacity:.8,textDecoration:'none'}}>Leaderboard</Link>
           <Link href="/submit-intel" style={{color:'#fff',opacity:.8,textDecoration:'none'}}>Submit</Link>
           <Link href="/pricing" style={{color:'#fff',opacity:.8,textDecoration:'none'}}>Pricing</Link>
           <Link href="/login" style={{color:'#fff',opacity:.8,textDecoration:'none'}}>Login</Link>
