@@ -1,6 +1,11 @@
 # AI Mind OS 🧠
 
-The Operating System for Dangerous Thinkers.
+The Operating S### 💎 Premium Features
+- **Subscription Tiers** - Multiple pricing options via Stripe
+- **Webhook Integration** - Automated subscription management
+- **Advanced Briefings** - Premium intelligence reports
+- **Priority Support** - Enhanced customer service
+- **Advanced Analytics** - Detailed insights and reporting for Dangerous Thinkers.
 
 ## Overview
 
@@ -159,6 +164,14 @@ AI Mind OS is a comprehensive intelligence platform that combines AI-powered bri
 ### `/api/analytics` - Analytics & Insights
 - `GET` - Fetch analytics dashboard data
 - `POST` - Track user events and behavior
+
+### `/api/lessons/complete` - Learning Progress
+- `POST` - Award XP for lesson completion
+- XP rewards with streak bonuses and N8N integration
+
+### `/api/stripe/webhook` - Subscription Management
+- `POST` - Handle Stripe webhook events
+- Automated subscription lifecycle management
 
 ## Development Features
 
