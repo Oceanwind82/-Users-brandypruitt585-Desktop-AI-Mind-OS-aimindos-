@@ -210,3 +210,68 @@ create index if not exists idx_referral_code on referral_tracking(referrer_code)
 create index if not exists idx_lesson_date on daily_lessons(lesson_date);
 create index if not exists idx_analytics_user on analytics_events(user_id);
 create index if not exists idx_subscription_customer on subscriptions(stripe_customer_id);
+
+-- FUNCTIONS
+
+-- Function to award XP when a lesson is completed
+create or replace function award_xp_on_lesson(_user uuid, _lesson uuid, _base_xp int default 100)
+returns json
+language plpgsql
+security definer
+as $$
+declare
+    _current_xp int := 0;
+    _current_level int := 1;
+    _current_streak int := 0;
+    _streak_bonus int := 0;
+    _total_xp int := 0;
+    _new_level int := 1;
+    _result json;
+begin
+    -- Get current user stats
+    select 
+        coalesce(total_xp, 0),
+        coalesce(level, 1),
+        coalesce(current_streak, 0)
+    into _current_xp, _current_level, _current_streak
+    from users 
+    where id = _user;
+
+    -- Calculate streak bonus (5% per consecutive day, max 50%)
+    _streak_bonus := least(_current_streak * 5, 50);
+    
+    -- Calculate total XP with bonus
+    _total_xp := _base_xp + (_base_xp * _streak_bonus / 100);
+    
+    -- Insert XP transaction
+    insert into xp_transactions (user_id, amount, type, description, lesson_id)
+    values (_user, _total_xp, 'lesson_completion', 'Lesson completed with streak bonus', _lesson);
+    
+    -- Update user stats
+    _current_xp := _current_xp + _total_xp;
+    _new_level := (_current_xp / 500) + 1;
+    
+    update users 
+    set 
+        total_xp = _current_xp,
+        level = _new_level,
+        current_streak = _current_streak + 1,
+        last_activity = now(),
+        updated_at = now()
+    where id = _user;
+    
+    -- Build result object
+    _result := json_build_object(
+        'lessonId', _lesson,
+        'xpAwarded', _total_xp,
+        'totalXp', _current_xp,
+        'level', _new_level,
+        'levelProgress', (_current_xp % 500) / 500.0,
+        'streakBonus', _streak_bonus,
+        'currentStreak', _current_streak + 1,
+        'completed', true
+    );
+    
+    return _result;
+end;
+$$;
