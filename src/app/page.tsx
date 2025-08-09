@@ -5,6 +5,7 @@ export default function Home() {
     <main style={{minHeight:'100vh',display:'grid',placeItems:'center',background:'#000',color:'#fff',fontFamily:'Inter,system-ui,sans-serif',textAlign:'center',padding:'40px'}}>
       <div>
         <nav style={{position:'absolute',top:'20px',right:'20px',display:'flex',gap:'20px'}}>
+          <Link href="/intelligence" style={{color:'#fff',opacity:.8,textDecoration:'none'}}>Intelligence</Link>
           <Link href="/pricing" style={{color:'#fff',opacity:.8,textDecoration:'none'}}>Pricing</Link>
           <Link href="/login" style={{color:'#fff',opacity:.8,textDecoration:'none'}}>Login</Link>
         </nav>

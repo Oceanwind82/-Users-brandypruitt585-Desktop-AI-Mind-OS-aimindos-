@@ -26,16 +26,44 @@ create table if not exists waitlist_entries (
     created_at timestamp with time zone default timezone('utc'::text, now())
 );
 
--- REFERRAL TRACKING
-create table if not exists referral_tracking (
-    id bigserial primary key,
-    referrer_code text not null,
-    new_user_email text not null,
-    points_awarded int default 0,
-    event_type text,
-    status text default 'confirmed',
-    created_at timestamp with time zone default timezone('utc'::text, now())
+-- Referral tracking for growth analytics
+CREATE TABLE referral_tracking (
+  id SERIAL PRIMARY KEY,
+  referrer_code TEXT,
+  new_user_email TEXT,
+  points_awarded INTEGER DEFAULT 0,
+  event_type TEXT CHECK (event_type IN ('signup', 'conversion', 'milestone')),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+-- Daily AI lessons and briefings
+CREATE TABLE daily_lessons (
+  id SERIAL PRIMARY KEY,
+  title TEXT NOT NULL,
+  content TEXT NOT NULL,
+  insights TEXT[], -- Array of key insights
+  category TEXT DEFAULT 'general',
+  difficulty_level INTEGER DEFAULT 1,
+  estimated_read_time INTEGER DEFAULT 5, -- minutes
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Insert sample daily lesson
+INSERT INTO daily_lessons (title, content, insights, category) VALUES 
+('Understanding AI Agent Architecture', 
+ 'Modern AI agents consist of three core components: perception (input processing), reasoning (decision making), and action (output execution). This architecture enables autonomous task completion and continuous learning from interactions.',
+ ARRAY['Agents = Perception + Reasoning + Action', 'Autonomous operation reduces human oversight', 'Continuous learning improves performance over time'],
+ 'fundamentals');
+
+-- Enable RLS (Row Level Security) for all tables
+ALTER TABLE waitlist_entries ENABLE ROW LEVEL SECURITY;
+ALTER TABLE referral_tracking ENABLE ROW LEVEL SECURITY;
+ALTER TABLE daily_lessons ENABLE ROW LEVEL SECURITY;
+
+-- Allow public read access to daily lessons
+CREATE POLICY "Allow public read access to daily lessons" ON daily_lessons
+  FOR SELECT USING (true);
 
 -- DAILY LESSONS
 create table if not exists daily_lessons (
