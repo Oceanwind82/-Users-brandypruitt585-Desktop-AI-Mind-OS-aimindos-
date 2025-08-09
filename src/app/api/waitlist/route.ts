@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
+import { notify } from '@/lib/telegram'
 
 export async function POST(req: Request) {
   try {
@@ -74,20 +75,15 @@ export async function POST(req: Request) {
       })
     }
 
-    if (process.env.TELEGRAM_BOT_TOKEN) {
-      const text = [
-        '🚨 NEW AI MIND OS RECRUIT',
-        `📧 Email: ${email}`,
-        `🔗 Referral: ${referralCode || 'Direct signup'}`,
-        `🎯 Code: ${userReferralCode}`,
-        `⏰ ${new Date().toLocaleString()}`
-      ].join('\n')
-      await fetch(`https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chat_id: process.env.TELEGRAM_CHAT_ID, text })
-      })
-    }
+    // Send Telegram notification
+    const telegramMessage = [
+      '🚨 <b>NEW AI MIND OS RECRUIT</b>',
+      `📧 Email: <code>${email}</code>`,
+      `🔗 Referral: ${referralCode || 'Direct signup'}`,
+      `🎯 Code: <code>${userReferralCode}</code>`,
+      `⏰ ${new Date().toLocaleString()}`
+    ].join('\n')
+    await notify(telegramMessage)
 
     return NextResponse.json({ success: true, referralCode: userReferralCode })
   } catch (error) {

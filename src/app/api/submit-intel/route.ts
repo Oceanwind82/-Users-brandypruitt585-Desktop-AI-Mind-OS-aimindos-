@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
+import { notify } from '@/lib/telegram'
 
 export async function POST(req: Request) {
   try {
@@ -118,30 +119,15 @@ export async function POST(req: Request) {
     }
 
     // Send Telegram notification
-    if (process.env.TELEGRAM_BOT_TOKEN && !process.env.TELEGRAM_BOT_TOKEN.includes('your_telegram')) {
-      try {
-        const text = [
-          '🧠 NEW COMMUNITY INTEL',
-          `📰 ${title}`,
-          `👤 ${submittedBy || 'Anonymous'}`,
-          `🎯 ${category || 'general'}`,
-          `💡 ${insights.length} insights extracted`,
-          `⚡ Published as lesson #${lessonData.id}`
-        ].join('\n')
-        
-        await fetch(`https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
-            chat_id: process.env.TELEGRAM_CHAT_ID, 
-            text 
-          })
-        })
-        console.log('📱 Telegram notification sent')
-      } catch (telegramError) {
-        console.error('Telegram notification failed:', telegramError)
-      }
-    }
+    const telegramMessage = [
+      '🧠 <b>NEW COMMUNITY INTEL</b>',
+      `📰 ${title}`,
+      `👤 ${submittedBy || 'Anonymous'}`,
+      `🎯 ${category || 'general'}`,
+      `💡 ${insights.length} insights extracted`,
+      `⚡ Published as lesson #${lessonData.id}`
+    ].join('\n')
+    await notify(telegramMessage)
 
     return NextResponse.json({ 
       success: true, 
