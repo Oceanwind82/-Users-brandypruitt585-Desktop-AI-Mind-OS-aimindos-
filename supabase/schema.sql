@@ -76,6 +76,23 @@ CREATE TABLE xp_transactions (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+-- Analytics events for tracking user behavior
+CREATE TABLE analytics_events (
+  id SERIAL PRIMARY KEY,
+  event_type TEXT NOT NULL,
+  event_data JSONB DEFAULT '{}',
+  user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+  session_id TEXT,
+  ip_address INET,
+  user_agent TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Create indexes for analytics queries
+CREATE INDEX idx_analytics_events_type_created ON analytics_events(event_type, created_at);
+CREATE INDEX idx_analytics_events_user_id ON analytics_events(user_id);
+CREATE INDEX idx_analytics_events_created_at ON analytics_events(created_at);
+
 -- Insert sample daily lesson
 INSERT INTO daily_lessons (title, content, insights, category) VALUES 
 ('Understanding AI Agent Architecture', 
@@ -89,6 +106,7 @@ ALTER TABLE referral_tracking ENABLE ROW LEVEL SECURITY;
 ALTER TABLE daily_lessons ENABLE ROW LEVEL SECURITY;
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE xp_transactions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE analytics_events ENABLE ROW LEVEL SECURITY;
 
 -- Allow public read access to daily lessons
 CREATE POLICY "Allow public read access to daily lessons" ON daily_lessons
@@ -105,6 +123,20 @@ CREATE POLICY "Users can update own profile" ON users
 -- Users can view their own XP transactions
 CREATE POLICY "Users can view own XP transactions" ON xp_transactions
   FOR SELECT USING (auth.uid() = user_id);
+
+-- Allow public insert for analytics events (anonymous tracking)
+CREATE POLICY "Allow public insert for analytics events" ON analytics_events
+  FOR INSERT WITH CHECK (true);
+
+-- Allow admins to read all analytics events
+CREATE POLICY "Allow admins to read analytics events" ON analytics_events
+  FOR SELECT USING (
+    EXISTS (
+      SELECT 1 FROM users 
+      WHERE users.id = auth.uid() 
+      AND users.badge IN ('Founder', 'Admin')
+    )
+  );
 
 -- Function to calculate user level based on XP
 CREATE OR REPLACE FUNCTION calculate_level(xp INTEGER)
