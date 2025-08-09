@@ -183,12 +183,21 @@ export default function Intelligence() {
                 ← Back to Dashboard
               </Link>
               
-              <button 
-                onClick={fetchIntelligence}
-                className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-sm transition-colors"
-              >
-                🔄 Refresh Intelligence
-              </button>
+              <div className="flex items-center space-x-4">
+                <Link
+                  href="/submit-intel"
+                  className="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded text-sm transition-colors"
+                >
+                  🧠 Submit Intel
+                </Link>
+                
+                <button 
+                  onClick={fetchIntelligence}
+                  className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-sm transition-colors"
+                >
+                  🔄 Refresh Intelligence
+                </button>
+              </div>
             </div>
           </div>
         )}
