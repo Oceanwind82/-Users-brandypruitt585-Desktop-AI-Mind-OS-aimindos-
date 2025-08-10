@@ -275,3 +275,22 @@ begin
     return _result;
 end;
 $$;
+
+-- ===============================
+-- STRIPE WEBHOOK IDEMPOTENCY
+-- ===============================
+
+-- Table to track processed Stripe webhook events for idempotency
+create table if not exists stripe_events (
+    id text primary key, -- Stripe event ID
+    type text not null, -- Event type (e.g., 'checkout.session.completed')
+    payload jsonb not null, -- Full event payload for debugging
+    processed_at timestamp with time zone default timezone('utc'::text, now()),
+    created_at timestamp with time zone default timezone('utc'::text, now())
+);
+
+-- Index for faster lookups by event type
+create index if not exists idx_stripe_events_type on stripe_events(type);
+
+-- Index for cleanup queries (optional - remove old events after 30 days)
+create index if not exists idx_stripe_events_created_at on stripe_events(created_at);

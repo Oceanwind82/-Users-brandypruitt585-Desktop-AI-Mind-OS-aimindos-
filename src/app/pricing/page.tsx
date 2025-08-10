@@ -1,5 +1,6 @@
 import Link from 'next/link';
 
+// Updated: Removed 1-on-1 sessions, replaced with AI Personal Learning Assistant
 export default function Pricing() {
   const plans = [
     {
@@ -32,7 +33,7 @@ export default function Pricing() {
       period: "/month",
       features: [
         "Everything in Dangerous Thinker",
-        "1-on-1 sessions",
+        "AI Personal Learning Assistant",
         "White-label access",
         "API access",
         "Custom integrations"

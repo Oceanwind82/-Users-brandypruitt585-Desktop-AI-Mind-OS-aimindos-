@@ -6,7 +6,9 @@ import { notify } from '@/lib/notify';
 const MOCK_MODE = !process.env.NEXT_PUBLIC_SUPABASE_URL || 
                   process.env.NEXT_PUBLIC_SUPABASE_URL === 'your_supabase_project_url' ||
                   !process.env.SUPABASE_SERVICE_ROLE_KEY ||
-                  process.env.SUPABASE_SERVICE_ROLE_KEY === 'your_supabase_service_role_key';
+                  process.env.SUPABASE_SERVICE_ROLE_KEY === 'your_supabase_service_role_key' ||
+                  process.env.SUPABASE_SERVICE_ROLE_KEY === 'your_new_service_role_key' ||
+                  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY === 'your_new_anon_key';
 
 const supabase = MOCK_MODE ? null : createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
