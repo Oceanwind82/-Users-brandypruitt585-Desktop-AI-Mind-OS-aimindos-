@@ -1,7 +1,8 @@
 'use client';
 import { Tldraw } from 'tldraw';
 import 'tldraw/tldraw.css';
-import SourcePanel from './SourcePanel';
+// Ensure SourcePanel.tsx exists in the same folder, or update the path below if needed:
+import SourcePanel from '@/components/SourcePanel';
 import Link from 'next/link';
 import { Home } from 'lucide-react';
 
