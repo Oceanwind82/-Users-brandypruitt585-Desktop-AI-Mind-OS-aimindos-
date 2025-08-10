@@ -515,9 +515,11 @@ function getModuleTopics(topic: string, index: number, total: number): string[] 
     return [`${topic} Overview`, `Core Concepts`, `Basic Principles`, `Getting Started`];
   } else if (isMiddle) {
     return [`Intermediate ${topic}`, `Practical Applications`, `Hands-on Exercises`, `Case Studies`];
-  } else {
-    // Advanced phase (isLate)
+  } else if (isLate) {
+    // Advanced phase
     return [`Advanced ${topic}`, `Real-world Projects`, `Best Practices`, `Industry Applications`];
+  } else {
+    return [`${topic} Overview`, `Core Concepts`, `Basic Principles`];
   }
 }
 

@@ -308,6 +308,8 @@ async function getUserProfile(user_id: string): Promise<UserProfile | null> {
 
 function determineeLearningStyle(_user: Record<string, unknown>): 'visual' | 'auditory' | 'kinesthetic' | 'reading' {
   // In a real implementation, this would be based on user preferences/behavior
+  // For now, we default to visual learning style
+  console.log('User learning style analysis needed for:', _user.id || 'anonymous');
   return 'visual';
 }
 

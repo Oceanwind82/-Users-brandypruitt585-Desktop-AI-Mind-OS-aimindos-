@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { AITopicLessonGenerator, AITopicLesson } from '@/lib/ai-topic-generator';
+import { AITopicLessonGenerator } from '@/lib/ai-topic-generator';
 import { AI_CURRICULUM } from '@/lib/ai-curriculum';
 import { notify } from '@/lib/notify';
 

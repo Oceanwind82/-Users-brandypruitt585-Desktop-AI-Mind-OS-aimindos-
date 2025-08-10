@@ -1,4 +1,3 @@
-import OpenAI from 'openai';
 import { createClient } from '@supabase/supabase-js';
 import { researchAI, ResearchUpdate } from './research-ai';
 
@@ -33,13 +32,6 @@ interface LessonCompletion {
   feedback_text?: string;
   lesson_quality_metrics?: string | object;
   completed_at: string;
-}
-
-interface QualityMetrics {
-  clarity: number;
-  usefulness: number;
-  pace: number;
-  would_recommend: boolean;
 }
 
 interface LessonImprovementSuggestion {

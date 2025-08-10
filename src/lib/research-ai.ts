@@ -75,18 +75,6 @@ export interface LessonRelevanceCheck {
   }[];
 }
 
-// Curated news sources for research
-const TRUSTED_NEWS_SOURCES: NewsSource[] = [
-  { id: 'reuters_tech', name: 'Reuters Technology', url: 'https://www.reuters.com/technology/', category: 'technology', reliability_score: 9 },
-  { id: 'nature_news', name: 'Nature News', url: 'https://www.nature.com/news', category: 'science', reliability_score: 10 },
-  { id: 'bbc_science', name: 'BBC Science', url: 'https://www.bbc.com/news/science_and_environment', category: 'science', reliability_score: 9 },
-  { id: 'techcrunch', name: 'TechCrunch', url: 'https://techcrunch.com/', category: 'technology', reliability_score: 8 },
-  { id: 'ai_news', name: 'AI News', url: 'https://artificialintelligence-news.com/', category: 'artificial_intelligence', reliability_score: 8 },
-  { id: 'mit_tech_review', name: 'MIT Technology Review', url: 'https://www.technologyreview.com/', category: 'technology', reliability_score: 10 },
-  { id: 'science_daily', name: 'Science Daily', url: 'https://www.sciencedaily.com/', category: 'science', reliability_score: 8 },
-  { id: 'ars_technica', name: 'Ars Technica', url: 'https://arstechnica.com/', category: 'technology', reliability_score: 9 }
-];
-
 class ResearchAI {
   private researchCache: Map<string, NewsItem[]> = new Map();
   private lastResearchUpdate: Date = new Date();
