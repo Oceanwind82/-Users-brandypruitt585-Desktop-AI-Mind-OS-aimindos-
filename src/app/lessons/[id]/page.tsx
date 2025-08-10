@@ -3,12 +3,13 @@ import { notFound } from 'next/navigation';
 import LessonViewer from '@/components/LessonViewer';
 
 interface PageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { id } = await params;
   return {
-    title: `Lesson: ${params.id} - AI Mind OS`,
+    title: `Lesson: ${id} - AI Mind OS`,
     description: 'Interactive AI lesson with amazingness tracking',
   };
 }
@@ -286,8 +287,9 @@ const mockLessons: Record<string, LessonData> = {
   }
 };
 
-export default function LessonPage({ params }: PageProps) {
-  const lesson = mockLessons[params.id];
+export default async function LessonPage({ params }: PageProps) {
+  const { id } = await params;
+  const lesson = mockLessons[id];
   
   if (!lesson) {
     notFound();
