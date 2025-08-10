@@ -100,6 +100,104 @@ export default function Dashboard() {
           </div>
         </div>
 
+        {/* AI Tools Section */}
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold text-white mb-4 flex items-center">
+            🛠️ AI Learning Tools
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* AI Mind Whiteboard */}
+            <a
+              href="/whiteboard"
+              className="group bg-gradient-to-br from-purple-600/20 to-blue-600/20 backdrop-blur-lg rounded-xl p-6 border border-purple-500/30 hover:border-purple-400/50 transition-all duration-300 hover:scale-105"
+            >
+              <div className="flex items-center mb-3">
+                <div className="p-2 bg-purple-500/20 rounded-lg mr-3">
+                  <svg className="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v12a4 4 0 004 4h4a2 2 0 002-2V5z" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-white group-hover:text-purple-300 transition-colors">
+                    AI Mind Whiteboard
+                  </h3>
+                  <span className="text-xs bg-gradient-to-r from-purple-400 to-blue-400 text-white px-2 py-1 rounded-full">
+                    NEW ✨
+                  </span>
+                </div>
+              </div>
+              <p className="text-purple-200 text-sm mb-3">
+                Visual mind mapping with AI assistance. Transform any content into interactive sticky notes and diagrams.
+              </p>
+              <div className="flex items-center text-purple-400 text-sm">
+                <span>Launch Whiteboard</span>
+                <svg className="ml-1 w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </div>
+            </a>
+
+            {/* AI Assistant */}
+            <a
+              href="/ai-assistant"
+              className="group bg-gradient-to-br from-indigo-600/20 to-purple-600/20 backdrop-blur-lg rounded-xl p-6 border border-indigo-500/30 hover:border-indigo-400/50 transition-all duration-300 hover:scale-105"
+            >
+              <div className="flex items-center mb-3">
+                <div className="p-2 bg-indigo-500/20 rounded-lg mr-3">
+                  <svg className="w-6 h-6 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-3.582 8-8 8a8.955 8.955 0 01-3.774-.828L3 21l1.828-6.226A8.955 8.955 0 013 12a8 8 0 018-8 8 8 0 018 8z" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-white group-hover:text-indigo-300 transition-colors">
+                    AI Learning Assistant
+                  </h3>
+                  <span className="text-xs bg-gradient-to-r from-indigo-400 to-purple-400 text-white px-2 py-1 rounded-full">
+                    INTROVERT-FRIENDLY
+                  </span>
+                </div>
+              </div>
+              <p className="text-indigo-200 text-sm mb-3">
+                Get personalized AI help with lessons, concepts, and learning paths. No human interaction required.
+              </p>
+              <div className="flex items-center text-indigo-400 text-sm">
+                <span>Chat with AI</span>
+                <svg className="ml-1 w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </div>
+            </a>
+
+            {/* Coming Soon - More Tools */}
+            <div className="group bg-gradient-to-br from-gray-600/20 to-slate-600/20 backdrop-blur-lg rounded-xl p-6 border border-gray-500/30">
+              <div className="flex items-center mb-3">
+                <div className="p-2 bg-gray-500/20 rounded-lg mr-3">
+                  <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-white">
+                    More AI Tools
+                  </h3>
+                  <span className="text-xs bg-gradient-to-r from-gray-400 to-slate-400 text-white px-2 py-1 rounded-full">
+                    COMING SOON
+                  </span>
+                </div>
+              </div>
+              <p className="text-gray-300 text-sm mb-3">
+                AI code playground, research assistant, presentation builder, and more amazing tools.
+              </p>
+              <div className="flex items-center text-gray-400 text-sm">
+                <span>Stay tuned...</span>
+                <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Available Lessons */}
           <div className="lg:col-span-2">
