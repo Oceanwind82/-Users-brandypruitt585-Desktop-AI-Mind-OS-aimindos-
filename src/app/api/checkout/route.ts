@@ -1,9 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-07-30.basil',
-});
+const getStripe = () => {
+  if (!process.env.STRIPE_SECRET_KEY) {
+    throw new Error('STRIPE_SECRET_KEY is not set');
+  }
+  return new Stripe(process.env.STRIPE_SECRET_KEY, {
+    apiVersion: '2025-07-30.basil',
+  });
+};
 
 interface PlanConfig {
   priceId: string;
@@ -31,6 +36,7 @@ const plans: Record<string, PlanConfig> = {
 
 export async function POST(request: NextRequest) {
   try {
+    const stripe = getStripe();
     const { planId, email, name } = await request.json();
 
     if (!planId || !plans[planId]) {
