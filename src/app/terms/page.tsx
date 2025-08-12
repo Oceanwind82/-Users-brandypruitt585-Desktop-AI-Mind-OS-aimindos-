@@ -69,7 +69,7 @@ export default function TermsPage() {
               <ul className="list-disc pl-6 space-y-2">
                 <li>Subscription fees are billed according to chosen plan</li>
                 <li>Cancellations take effect at the end of billing period</li>
-                <li>Refunds are handled according to our refund policy</li>
+                <li>All sales are final - no refunds will be provided</li>
                 <li>Price changes require 30-day advance notice</li>
               </ul>
             </div>

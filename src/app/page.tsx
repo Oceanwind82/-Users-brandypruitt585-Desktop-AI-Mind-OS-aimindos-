@@ -160,7 +160,7 @@ export default function Home() {
             <div className="flex gap-6 text-sm text-gray-400">
               <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
               <Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
-              <Link href="#" className="hover:text-white transition-colors">Refund Policy</Link>
+              <Link href="/refund-policy" className="hover:text-white transition-colors">Refund Policy</Link>
             </div>
             <p className="text-sm text-gray-500">
               © {new Date().getFullYear()} AI Mind OS by Brandy Pruitt — Founder & CEO

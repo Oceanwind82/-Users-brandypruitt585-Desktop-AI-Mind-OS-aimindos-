@@ -183,9 +183,9 @@ export default function Pricing() {
           <p className="text-xl md:text-2xl text-gray-300 mb-4 max-w-3xl mx-auto">
             Unlock the full potential of your dangerous thinking with the right plan for your journey
           </p>
-          <div className="inline-flex items-center gap-2 bg-green-500/20 text-green-300 px-4 py-2 rounded-full text-sm font-medium">
-            <Check className="w-4 h-4" />
-            30-day money-back guarantee on all paid plans
+          <div className="inline-flex items-center gap-2 bg-red-500/20 text-red-300 px-4 py-2 rounded-full text-sm font-medium">
+            <Star className="w-4 h-4" />
+            All sales are final - No refunds policy
           </div>
         </div>
         
@@ -346,7 +346,7 @@ export default function Pricing() {
             </div>
             <div>
               <h3 className="font-bold mb-2">Is there a free trial for paid plans?</h3>
-              <p className="text-gray-400 text-sm">All paid plans come with a 30-day money-back guarantee. Start with Explorer free, then upgrade when ready.</p>
+              <p className="text-gray-400 text-sm">Start with Explorer free to test all features. Please note: All paid subscriptions are final with no refunds.</p>
             </div>
             <div>
               <h3 className="font-bold mb-2">Do you offer discounts for students?</h3>

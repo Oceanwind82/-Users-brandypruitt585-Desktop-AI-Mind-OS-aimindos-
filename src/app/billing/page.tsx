@@ -164,6 +164,8 @@ export default function BillingPage() {
             <p className="text-gray-400 text-sm">
               Changes to your plan will be prorated and take effect immediately. 
               You can always upgrade or downgrade through the billing portal.
+              <br /><br />
+              <strong className="text-yellow-400">Please note:</strong> All sales are final. No refunds will be provided for any subscriptions or services.
             </p>
           </div>
         </div>
