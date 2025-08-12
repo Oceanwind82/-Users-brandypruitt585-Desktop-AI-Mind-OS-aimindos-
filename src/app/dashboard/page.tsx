@@ -1,55 +1,116 @@
-import { Metadata } from 'next';
-
-export const metadata: Metadata = {
-  title: 'Dashboard - AI Mind OS',
-  description: 'Your AI learning dashboard with amazing lessons and progress tracking',
-};
+'use client';
+import { useState } from 'react';
+import GamificationPanel from '@/components/GamificationPanel';
+import XPProgressBar from '@/components/XPProgressBar';
+import AchievementToast, { useAchievementNotifications } from '@/components/AchievementToast';
+import MissionTracker from '@/components/MissionTracker';
+import ReferralDashboard from '@/components/ReferralDashboard';
+import Leaderboard from '@/components/Leaderboard';
 
 export default function Dashboard() {
+  const [activeTab, setActiveTab] = useState<'overview' | 'missions' | 'referrals' | 'leaderboard'>('overview');
+  const { currentAchievement, showAchievement, hideAchievement } = useAchievementNotifications();
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+      {/* Achievement Toast */}
+      <AchievementToast 
+        achievement={currentAchievement} 
+        onClose={hideAchievement} 
+      />
+      
       <div className="container mx-auto px-4 py-8">
-        {/* Header */}
+        {/* Header with XP Progress */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-white mb-2">
             🧠 AI Mind OS Dashboard
           </h1>
-          <p className="text-purple-200 text-lg">
+          <p className="text-purple-200 text-lg mb-4">
             Welcome to your AI learning journey - where amazing lessons meet cutting-edge technology
           </p>
+          {/* XP Progress Bar */}
+          <XPProgressBar />
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
-            <div className="text-center">
-              <div className="text-3xl font-bold text-green-400">1,250</div>
-              <div className="text-purple-200">Total XP</div>
-              <div className="text-sm text-purple-300">Level 3</div>
+        {/* Gamification Stats */}
+        <div className="mb-8">
+          <GamificationPanel />
+        </div>
+
+        {/* Gamification Tabs */}
+        <div className="mb-8">
+          <div className="bg-white/10 backdrop-blur-lg rounded-xl border border-white/20 overflow-hidden">
+            {/* Tab Navigation */}
+            <div className="flex border-b border-white/10">
+              {[
+                { id: 'overview', label: '📊 Overview', icon: '📊' },
+                { id: 'missions', label: '🎯 Missions', icon: '🎯' },
+                { id: 'referrals', label: '👥 Referrals', icon: '👥' },
+                { id: 'leaderboard', label: '🏆 Leaderboard', icon: '🏆' }
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id as 'overview' | 'missions' | 'referrals' | 'leaderboard')}
+                  className={`flex-1 px-6 py-4 text-sm font-medium transition-all ${
+                    activeTab === tab.id
+                      ? 'bg-purple-600/30 text-white border-b-2 border-purple-400'
+                      : 'text-gray-300 hover:text-white hover:bg-white/5'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
             </div>
-          </div>
-          
-          <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
-            <div className="text-center">
-              <div className="text-3xl font-bold text-blue-400">7</div>
-              <div className="text-purple-200">Current Streak</div>
-              <div className="text-sm text-purple-300">🔥 Keep it up!</div>
-            </div>
-          </div>
-          
-          <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
-            <div className="text-center">
-              <div className="text-3xl font-bold text-yellow-400">12</div>
-              <div className="text-purple-200">Lessons Completed</div>
-              <div className="text-sm text-purple-300">158 remaining</div>
-            </div>
-          </div>
-          
-          <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
-            <div className="text-center">
-              <div className="text-3xl font-bold text-purple-400">9.2</div>
-              <div className="text-purple-200">Amazingness Score</div>
-              <div className="text-sm text-purple-300">⭐ Amazing tier!</div>
+
+            {/* Tab Content */}
+            <div className="p-6">
+              {activeTab === 'overview' && (
+                <div className="text-center py-8">
+                  <h3 className="text-2xl font-bold text-white mb-4">🎮 Gamification Overview</h3>
+                  <p className="text-gray-300 mb-6">
+                    Track your progress, complete missions, invite friends, and compete on leaderboards!
+                  </p>
+                  
+                  {/* Demo Achievement Button */}
+                  <div className="mb-6">
+                    <button
+                      onClick={() => showAchievement({
+                        id: 'demo',
+                        title: 'Dashboard Explorer',
+                        description: 'You discovered the gamification system!',
+                        badge_icon: '🎉',
+                        xp_bonus: 50,
+                        rarity: 'rare'
+                      })}
+                      className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white px-6 py-2 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl"
+                    >
+                      🎉 Test Achievement Notification
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                    <div className="bg-purple-500/20 rounded-lg p-4">
+                      <div className="text-2xl mb-2">🎯</div>
+                      <div className="text-white font-semibold">Daily Missions</div>
+                      <div className="text-gray-300 text-sm">Complete challenges to earn XP</div>
+                    </div>
+                    <div className="bg-blue-500/20 rounded-lg p-4">
+                      <div className="text-2xl mb-2">👥</div>
+                      <div className="text-white font-semibold">Referral Program</div>
+                      <div className="text-gray-300 text-sm">Invite friends and earn rewards</div>
+                    </div>
+                    <div className="bg-yellow-500/20 rounded-lg p-4">
+                      <div className="text-2xl mb-2">🏆</div>
+                      <div className="text-white font-semibold">Leaderboards</div>
+                      <div className="text-gray-300 text-sm">Compete with other learners</div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'missions' && <MissionTracker />}
+              {activeTab === 'referrals' && <ReferralDashboard />}
+              {activeTab === 'leaderboard' && <Leaderboard />}
             </div>
           </div>
         </div>
@@ -106,6 +167,37 @@ export default function Dashboard() {
             🛠️ AI Learning Tools
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* AI Mind Workbench */}
+            <a
+              href="/workbench"
+              className="group bg-gradient-to-br from-purple-600/20 to-blue-600/20 backdrop-blur-lg rounded-xl p-6 border border-purple-500/30 hover:border-purple-400/50 transition-all duration-300 hover:scale-105"
+            >
+              <div className="flex items-center mb-3">
+                <div className="p-2 bg-purple-500/20 rounded-lg mr-3">
+                  <svg className="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-white group-hover:text-purple-300 transition-colors">
+                    AI Mind Workbench
+                  </h3>
+                  <span className="text-xs bg-gradient-to-r from-purple-400 to-blue-400 text-white px-2 py-1 rounded-full">
+                    CREATIVE SUITE ✨
+                  </span>
+                </div>
+              </div>
+              <p className="text-purple-200 text-sm mb-3">
+                Complete creative suite with whiteboard, AI writing, video analysis, and node-based workflows.
+              </p>
+              <div className="flex items-center text-purple-400 text-sm">
+                <span>Launch Workbench</span>
+                <svg className="ml-1 w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </div>
+            </a>
+
             {/* AI Mind Whiteboard */}
             <a
               href="/whiteboard"
@@ -122,7 +214,7 @@ export default function Dashboard() {
                     AI Mind Whiteboard
                   </h3>
                   <span className="text-xs bg-gradient-to-r from-purple-400 to-blue-400 text-white px-2 py-1 rounded-full">
-                    NEW ✨
+                    STANDALONE ✨
                   </span>
                 </div>
               </div>

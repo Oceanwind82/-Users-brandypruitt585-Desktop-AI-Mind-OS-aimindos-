@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import CookieConsent from "@/components/CookieConsent";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,6 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://aimindos.com'),
   title: "AI Mind OS - The Operating System for Dangerous Thinkers",
   description: "Transform your thinking with AI Mind OS. The revolutionary platform that challenges conventional wisdom and unleashes your intellectual potential.",
   keywords: ["AI", "mind training", "critical thinking", "productivity", "learning"],
@@ -64,6 +66,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {children}
+        <CookieConsent />
       </body>
     </html>
   );

@@ -1,178 +1,120 @@
-import { NextResponse } from 'next/server'
-import { createServerClient } from '@supabase/ssr'
-import { cookies } from 'next/headers'
+import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
 
-interface UserData {
-  email: string
-  full_name?: string
-  total_xp?: number
-  current_level?: number
-  current_streak?: number
-  longest_streak?: number
-  badge?: string
-}
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
-export async function GET() {
+// GET /api/leaderboard - Get leaderboard data
+export async function GET(request: NextRequest) {
   try {
-    // Check if Supabase is configured
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-    
-    if (!supabaseUrl || !supabaseKey || supabaseUrl.includes('your_supabase')) {
-      // Mock leaderboard for development
-      const mockLeaderboard = [
-        {
-          rank: 1,
-          name: "Brandy Pruitt",
-          xp: 2847,
-          level: 12,
-          streak: 23,
-          longestStreak: 45,
-          badge: "Founder"
-        },
-        {
-          rank: 2,
-          name: "TechFounder",
-          xp: 2340,
-          level: 11,
-          streak: 18,
-          longestStreak: 32,
-          badge: "Early Adopter"
-        },
-        {
-          rank: 3,
-          name: "AIEnthusiast",
-          xp: 1950,
-          level: 9,
-          streak: 15,
-          longestStreak: 28,
-          badge: "Community Leader"
-        },
-        {
-          rank: 4,
-          name: "AutomationKing",
-          xp: 1680,
-          level: 8,
-          streak: 12,
-          longestStreak: 24,
-          badge: "Automation Expert"
-        },
-        {
-          rank: 5,
-          name: "ProductivityHacker",
-          xp: 1420,
-          level: 7,
-          streak: 9,
-          longestStreak: 19,
-          badge: "Productivity Guru"
-        },
-        {
-          rank: 6,
-          name: "DataScientist",
-          xp: 1180,
-          level: 6,
-          streak: 7,
-          longestStreak: 16,
-          badge: "Data Master"
-        },
-        {
-          rank: 7,
-          name: "StartupCEO",
-          xp: 950,
-          level: 5,
-          streak: 5,
-          longestStreak: 13,
-          badge: "Visionary"
-        },
-        {
-          rank: 8,
-          name: "CodeWizard",
-          xp: 780,
-          level: 4,
-          streak: 3,
-          longestStreak: 11,
-          badge: "Developer"
-        },
-        {
-          rank: 9,
-          name: "InnovatorX",
-          xp: 620,
-          level: 3,
-          streak: 2,
-          longestStreak: 8,
-          badge: "Innovator"
-        },
-        {
-          rank: 10,
-          name: "FutureThinker",
-          xp: 450,
-          level: 2,
-          streak: 1,
-          longestStreak: 5,
-          badge: "Rising Star"
-        }
-      ]
-      
-      console.log('🏆 MOCK LEADERBOARD:', mockLeaderboard.length, 'players')
-      
-      return NextResponse.json({
-        leaderboard: mockLeaderboard,
-        lastUpdate: new Date().toISOString(),
-        totalPlayers: mockLeaderboard.length,
-        status: 'mock'
-      })
+    const { searchParams } = new URL(request.url);
+    const userId = searchParams.get('userId');
+    const limit = parseInt(searchParams.get('limit') || '50');
+
+    // Get global leaderboard (top users by total XP)
+    const { data: globalLeaderboard, error: globalError } = await supabase
+      .from('profiles')
+      .select('id, name, avatar_url, current_level, total_xp, weekly_xp, daily_xp')
+      .order('total_xp', { ascending: false })
+      .limit(limit);
+
+    if (globalError) {
+      console.error('Error fetching global leaderboard:', globalError);
+      return NextResponse.json({ error: 'Failed to fetch global leaderboard' }, { status: 500 });
     }
 
-    // Real Supabase integration
-    const cookieStore = await cookies()
-    const supabase = createServerClient(
-      supabaseUrl,
-      supabaseKey,
-      {
-        cookies: {
-          get(name: string) {
-            return cookieStore.get(name)?.value
-          },
-          set(name: string, value: string, options: Record<string, unknown>) {
-            cookieStore.set({ name, value, ...options })
-          },
-          remove(name: string, options: Record<string, unknown>) {
-            cookieStore.set({ name, value: '', ...options })
-          },
-        },
-      }
-    )
+    // Get weekly leaderboard (top users by weekly XP)
+    const { data: weeklyLeaderboard, error: weeklyError } = await supabase
+      .from('profiles')
+      .select('id, name, avatar_url, current_level, total_xp, weekly_xp, daily_xp')
+      .order('weekly_xp', { ascending: false })
+      .limit(limit);
 
-    const { data: top, error } = await supabase
-      .from('users')
-      .select('email, full_name, total_xp, current_level, current_streak, longest_streak, badge')
-      .order('total_xp', { ascending: false })
-      .limit(50)
-    
-    if (error) throw error
+    if (weeklyError) {
+      console.error('Error fetching weekly leaderboard:', weeklyError);
+      return NextResponse.json({ error: 'Failed to fetch weekly leaderboard' }, { status: 500 });
+    }
 
-    const leaderboard = top.map((u: UserData, i: number) => ({
-      rank: i + 1,
-      name: u.full_name || u.email.split('@')[0],
-      xp: u.total_xp || 0,
-      level: u.current_level || 1,
-      streak: u.current_streak || 0,
-      longestStreak: u.longest_streak || 0,
-      badge: u.badge || 'Member'
-    }))
+    // Get daily leaderboard (top users by daily XP)
+    const { data: dailyLeaderboard, error: dailyError } = await supabase
+      .from('profiles')
+      .select('id, name, avatar_url, current_level, total_xp, weekly_xp, daily_xp')
+      .order('daily_xp', { ascending: false })
+      .limit(limit);
 
-    return NextResponse.json({ 
-      leaderboard, 
-      lastUpdate: new Date().toISOString(),
-      totalPlayers: leaderboard.length,
-      status: 'live'
-    })
+    if (dailyError) {
+      console.error('Error fetching daily leaderboard:', dailyError);
+      return NextResponse.json({ error: 'Failed to fetch daily leaderboard' }, { status: 500 });
+    }
+
+    // Get current user's rank if userId provided
+    let currentUserGlobalRank = 0;
+    let totalUsers = 0;
+
+    if (userId) {
+      // Get total user count
+      const { count } = await supabase
+        .from('profiles')
+        .select('*', { count: 'exact', head: true });
+      
+      totalUsers = count || 0;
+
+      // Get current user's global rank
+      const { data: userRankData } = await supabase
+        .from('profiles')
+        .select('total_xp')
+        .gt('total_xp', globalLeaderboard?.find(u => u.id === userId)?.total_xp || 0);
+      
+      currentUserGlobalRank = (userRankData?.length || 0) + 1;
+    }
+
+    // Format leaderboard data
+    const formatLeaderboard = (data: Array<{
+      id: string;
+      name?: string;
+      avatar_url?: string;
+      current_level?: number;
+      total_xp?: number;
+      weekly_xp?: number;
+      daily_xp?: number;
+    }>) => {
+      return data.map((user, index) => ({
+        id: user.id,
+        name: user.name || 'Anonymous',
+        avatar: user.avatar_url,
+        level: user.current_level || 1,
+        total_xp: user.total_xp || 0,
+        weekly_xp: user.weekly_xp || 0,
+        daily_xp: user.daily_xp || 0,
+        rank: index + 1,
+        badge: getBadgeForLevel(user.current_level || 1),
+        is_current_user: user.id === userId
+      }));
+    };
+
+    const leaderboardData = {
+      global: formatLeaderboard(globalLeaderboard || []),
+      weekly: formatLeaderboard(weeklyLeaderboard || []),
+      daily: formatLeaderboard(dailyLeaderboard || []),
+      current_user_global_rank: currentUserGlobalRank,
+      total_users: totalUsers
+    };
+
+    return NextResponse.json({ leaderboard: leaderboardData });
   } catch (error) {
-    console.error('Leaderboard error:', error)
-    return NextResponse.json({ 
-      error: 'Leaderboard temporarily unavailable',
-      lastUpdate: new Date().toISOString(),
-      status: 'error'
-    }, { status: 500 })
+    console.error('Error in leaderboard API:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
+}
+
+// Get badge emoji based on level
+function getBadgeForLevel(level: number): string {
+  if (level >= 50) return '👑'; // Legend
+  if (level >= 40) return '💎'; // Master
+  if (level >= 30) return '🏆'; // Expert
+  if (level >= 20) return '🥇'; // Advanced
+  if (level >= 10) return '🥈'; // Intermediate
+  return '🥉'; // Beginner
 }
