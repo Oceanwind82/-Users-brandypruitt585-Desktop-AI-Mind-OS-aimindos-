@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Activity, Server, Database, Globe, Shield, Clock } from 'lucide-react';
+import Link from 'next/link';
+import { Activity, Server, Database, Globe, Shield, Clock, ArrowLeft } from 'lucide-react';
 
 interface ServiceStatus {
   name: string;
@@ -60,6 +61,15 @@ export default function StatusPage() {
     <div className="min-h-screen bg-gradient-to-br from-black via-purple-900/20 to-black">
       <div className="container mx-auto px-4 py-16">
         <div className="max-w-4xl mx-auto">
+          {/* Back Button */}
+          <Link 
+            href="/"
+            className="inline-flex items-center gap-2 text-gray-300 hover:text-white mb-8 transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Home
+          </Link>
+
           {/* Header */}
           <div className="text-center mb-12">
             <h1 className="text-4xl font-bold text-white mb-4">System Status</h1>

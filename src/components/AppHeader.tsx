@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { CompactXPBar } from '@/components/XPProgressBar';
-import { Home, BookOpen, Users, Trophy, Settings, Palette, CreditCard } from 'lucide-react';
+import { Home, BookOpen, Users, Trophy, Settings, Palette, CreditCard, ArrowLeft } from 'lucide-react';
 
 interface AppHeaderProps {
   title?: string;
@@ -31,8 +31,17 @@ export default function AppHeader({
     <header className="border-b border-white/10 bg-black/20 backdrop-blur-lg sticky top-0 z-50">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
+          {/* Back to Home Button */}
+          <Link 
+            href="/"
+            className="inline-flex items-center gap-2 text-gray-300 hover:text-white transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span className="hidden sm:inline">Home</span>
+          </Link>
+
           {/* Title Section */}
-          <div className="flex-1">
+          <div className="flex-1 text-center">
             <h1 className="text-2xl font-bold text-white mb-1">
               {title}
             </h1>
@@ -45,7 +54,7 @@ export default function AppHeader({
           
           {/* XP Progress Bar */}
           {showXP && (
-            <div className="flex-1 max-w-md mx-4">
+            <div className="flex-1 max-w-xs">
               <CompactXPBar />
             </div>
           )}

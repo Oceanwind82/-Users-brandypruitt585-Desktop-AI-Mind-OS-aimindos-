@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { CreditCard, Download, ExternalLink, Calendar, DollarSign } from 'lucide-react';
+import { CreditCard, Download, ExternalLink, Calendar, DollarSign, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
 export default function BillingPage() {
@@ -41,6 +41,15 @@ export default function BillingPage() {
     <div className="min-h-screen bg-gradient-to-br from-black via-purple-900/20 to-black">
       <div className="container mx-auto px-4 py-16">
         <div className="max-w-4xl mx-auto">
+          {/* Back Button */}
+          <Link 
+            href="/"
+            className="inline-flex items-center gap-2 text-gray-300 hover:text-white mb-8 transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Home
+          </Link>
+
           {/* Header */}
           <div className="mb-8">
             <h1 className="text-4xl font-bold text-white mb-4">Billing & Account</h1>

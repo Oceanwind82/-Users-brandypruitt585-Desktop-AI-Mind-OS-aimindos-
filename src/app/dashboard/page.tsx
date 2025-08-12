@@ -1,5 +1,7 @@
 'use client';
 import { useState } from 'react';
+import Link from 'next/link';
+import { ArrowLeft } from 'lucide-react';
 import GamificationPanel from '@/components/GamificationPanel';
 import XPProgressBar from '@/components/XPProgressBar';
 import AchievementToast, { useAchievementNotifications } from '@/components/AchievementToast';
@@ -20,6 +22,15 @@ export default function Dashboard() {
       />
       
       <div className="container mx-auto px-4 py-8">
+        {/* Back Button */}
+        <Link 
+          href="/"
+          className="inline-flex items-center gap-2 text-gray-300 hover:text-white mb-6 transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back to Home
+        </Link>
+
         {/* Header with XP Progress */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-white mb-2">

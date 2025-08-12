@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { CheckCircle, ArrowRight, Zap, Trophy, Users } from 'lucide-react';
+import { CheckCircle, ArrowRight, ArrowLeft, Zap, Trophy, Users } from 'lucide-react';
 
 export default function CheckoutSuccessPage() {
   const [userEmail, setUserEmail] = useState<string>('');
@@ -17,6 +17,15 @@ export default function CheckoutSuccessPage() {
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
       <div className="max-w-4xl mx-auto px-6 py-20">
+        {/* Back Button */}
+        <Link 
+          href="/"
+          className="inline-flex items-center gap-2 text-gray-300 hover:text-white mb-8 transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back to Home
+        </Link>
+
         <div className="text-center">
           {/* Success Icon */}
           <div className="inline-flex items-center justify-center w-20 h-20 bg-green-500/20 rounded-full mb-8">
