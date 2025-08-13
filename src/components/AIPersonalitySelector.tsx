@@ -65,7 +65,7 @@ export default function AIPersonalitySelector() {
     try {
       const result = await askHivemind(testQuestion);
       setTestResult(result);
-    } catch (error) {
+    } catch {
       setTestResult('Error: Hivemind is not active');
     }
   };
