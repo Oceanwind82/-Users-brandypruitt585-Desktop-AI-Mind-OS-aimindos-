@@ -5,6 +5,11 @@ import { SquarePen, Settings, Trophy, User } from 'lucide-react';
 import AppHeader from '@/components/AppHeader';
 import AchievementToast, { useAchievementNotifications } from '@/components/AchievementToast';
 import AISuggestionsPanel from '@/components/AISuggestionsPanel';
+import MindControlCenter from '@/components/MindControlCenter';
+import Spatial3DScene from '@/components/Spatial3DScene';
+import Spatial3DControls from '@/components/Spatial3DControls';
+import DynamicSceneBackground from '@/components/DynamicSceneBackground';
+import SceneControls from '@/components/SceneControls';
 import { AIContextManager, useAIContext } from '@/lib/ai-context';
 import WorkbenchSidebar from './WorkbenchSidebar';
 import WorkbenchWhiteboardEnhanced from './WorkbenchWhiteboard-Enhanced';
@@ -92,8 +97,21 @@ function WorkbenchContent() {
         onClose={hideAchievement} 
       />
 
+      {/* Dynamic Scene Background */}
+      <DynamicSceneBackground />
+
+      {/* Scene Controls */}
+      <SceneControls />
+
       {/* AI Suggestions Panel */}
       <AISuggestionsPanel />
+
+      {/* Mind Control Center */}
+      <MindControlCenter />
+
+      {/* 3D Spatial Interface */}
+      <Spatial3DScene />
+      <Spatial3DControls />
 
       {/* Header */}
       <AppHeader 

@@ -3,6 +3,11 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from '@vercel/analytics/react';
 import "./globals.css";
 import CookieConsent from "@/components/CookieConsent";
+import { SensoryProvider } from '@/lib/sensory-system';
+import { PredictiveProvider } from '@/lib/predictive-system';
+import { AIPersonalityProvider } from '@/lib/ai-personality';
+import { Spatial3DProvider } from '@/lib/spatial-3d';
+import { DynamicScenesProvider } from '@/lib/dynamic-scenes';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -66,7 +71,17 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <SensoryProvider>
+          <PredictiveProvider>
+            <AIPersonalityProvider>
+              <Spatial3DProvider>
+                <DynamicScenesProvider>
+                  {children}
+                </DynamicScenesProvider>
+              </Spatial3DProvider>
+            </AIPersonalityProvider>
+          </PredictiveProvider>
+        </SensoryProvider>
         <CookieConsent />
         <Analytics />
       </body>
