@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { CompactXPBar } from '@/components/XPProgressBar';
-import { Home, BookOpen, Users, Trophy, Settings, Palette, CreditCard, ArrowLeft } from 'lucide-react';
+import { Home, BookOpen, Users, Trophy, Settings, Palette, CreditCard, ArrowLeft, Zap } from 'lucide-react';
 
 interface AppHeaderProps {
   title?: string;
@@ -21,6 +21,8 @@ export default function AppHeader({
     { href: '/dashboard', icon: Home, label: 'Dashboard' },
     { href: '/lessons', icon: BookOpen, label: 'Lessons' },
     { href: '/whiteboard', icon: Palette, label: 'Whiteboard' },
+    { href: '/workbench', icon: Palette, label: 'Workbench' },
+    { href: '/automation', icon: Zap, label: 'Automation' },
     { href: '/leaderboard', icon: Trophy, label: 'Leaderboard' },
     { href: '/community', icon: Users, label: 'Community' },
     { href: '/billing', icon: CreditCard, label: 'Billing' },

@@ -6,6 +6,7 @@ import AppHeader from '@/components/AppHeader';
 import AchievementToast, { useAchievementNotifications } from '@/components/AchievementToast';
 import AISuggestionsPanel from '@/components/AISuggestionsPanel';
 import RealTimeIntelligenceLayer from '@/components/RealTimeIntelligenceLayer';
+import CollaborationLayer from '@/components/CollaborationLayer';
 import { AIContextManager, useAIContext } from '@/lib/ai-context';
 import WorkbenchSidebar from './WorkbenchSidebar';
 import WorkbenchWhiteboardEnhanced from './WorkbenchWhiteboard-Enhanced';
@@ -98,6 +99,9 @@ function WorkbenchContent() {
 
       {/* Real-Time Intelligence Layer */}
       <RealTimeIntelligenceLayer />
+
+      {/* Collaboration Layer */}
+      <CollaborationLayer />
 
       {/* Header */}
       <AppHeader 
