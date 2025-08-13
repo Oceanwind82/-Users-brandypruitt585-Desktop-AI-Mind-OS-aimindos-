@@ -13,23 +13,23 @@ export default function WorkbenchSidebar({ active, onSelect }: WorkbenchSidebarP
   const tools = [
     { 
       key: 'whiteboard' as ToolKey, 
-      label: 'Whiteboard', 
+      label: 'Enhanced Whiteboard', 
       icon: Paintbrush,
-      description: 'Visual canvas for ideas',
+      description: 'Advanced drag-and-drop canvas with AI templates',
       color: 'from-blue-500/20 to-cyan-500/20 border-blue-500/30'
     },
     { 
       key: 'writing' as ToolKey, 
       label: 'Writing AI', 
       icon: PenTool,
-      description: 'AI-powered text generation',
+      description: 'Context-aware AI text generation',
       color: 'from-green-500/20 to-emerald-500/20 border-green-500/30'
     },
     { 
       key: 'video' as ToolKey, 
-      label: 'Video AI', 
+      label: 'Video Creator', 
       icon: Video,
-      description: 'Script and storyboard creation',
+      description: 'AI-powered video script & storyboard generation',
       color: 'from-purple-500/20 to-pink-500/20 border-purple-500/30'
     },
     { 

@@ -7,9 +7,9 @@ import AchievementToast, { useAchievementNotifications } from '@/components/Achi
 import AISuggestionsPanel from '@/components/AISuggestionsPanel';
 import { AIContextManager, useAIContext } from '@/lib/ai-context';
 import WorkbenchSidebar from './WorkbenchSidebar';
-import WorkbenchWhiteboard from './WorkbenchWhiteboard';
-import WorkbenchWritingAI from './WorkbenchWritingAI';
-import WorkbenchVideoAI from './WorkbenchVideoAI';
+import WorkbenchWhiteboardEnhanced from './WorkbenchWhiteboard-Enhanced';
+import WorkbenchWritingAI from './WorkbenchWritingAI-Enhanced';
+import WorkbenchVideoCreatorEnhanced from './WorkbenchVideoCreator-Enhanced';
 import WorkbenchNodeAI from './WorkbenchNodeAI';
 
 type ToolKey = 'whiteboard' | 'writing' | 'video' | 'nodes';
@@ -112,9 +112,9 @@ function WorkbenchContent() {
           
           {/* Main Tool Area */}
           <div className="bg-white/5 rounded-xl border border-white/10 p-6 overflow-hidden">
-            {tool === 'whiteboard' && <WorkbenchWhiteboard />}
+            {tool === 'whiteboard' && <WorkbenchWhiteboardEnhanced />}
             {tool === 'writing' && <WorkbenchWritingAI />}
-            {tool === 'video' && <WorkbenchVideoAI />}
+            {tool === 'video' && <WorkbenchVideoCreatorEnhanced />}
             {tool === 'nodes' && <WorkbenchNodeAI />}
           </div>
         </div>
