@@ -5,6 +5,7 @@ import { SquarePen, Settings, Trophy, User } from 'lucide-react';
 import AppHeader from '@/components/AppHeader';
 import AchievementToast, { useAchievementNotifications } from '@/components/AchievementToast';
 import AISuggestionsPanel from '@/components/AISuggestionsPanel';
+import RealTimeIntelligenceLayer from '@/components/RealTimeIntelligenceLayer';
 import { AIContextManager, useAIContext } from '@/lib/ai-context';
 import WorkbenchSidebar from './WorkbenchSidebar';
 import WorkbenchWhiteboardEnhanced from './WorkbenchWhiteboard-Enhanced';
@@ -94,6 +95,9 @@ function WorkbenchContent() {
 
       {/* AI Suggestions Panel */}
       <AISuggestionsPanel />
+
+      {/* Real-Time Intelligence Layer */}
+      <RealTimeIntelligenceLayer />
 
       {/* Header */}
       <AppHeader 
