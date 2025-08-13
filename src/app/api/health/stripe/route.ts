@@ -6,7 +6,7 @@ export async function GET() {
     return new Response(JSON.stringify({ ok: false, error: 'Missing STRIPE_SECRET_KEY' }), { status: 500 });
   }
   try {
-    const stripe = new Stripe(stripeKey, { apiVersion: '2022-11-15' });
+    const stripe = new Stripe(stripeKey, { apiVersion: '2025-07-30.basil' });
     // Try fetching account info as a health check
     const account = await stripe.accounts.retrieve();
     return new Response(JSON.stringify({ ok: true, accountId: account.id }), { status: 200 });
