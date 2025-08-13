@@ -8,6 +8,7 @@ import AchievementToast, { useAchievementNotifications } from '@/components/Achi
 import MissionTracker from '@/components/MissionTracker';
 import ReferralDashboard from '@/components/ReferralDashboard';
 import Leaderboard from '@/components/Leaderboard';
+import DailyMissionCard from '@/components/DailyMissionCard';
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState<'overview' | 'missions' | 'referrals' | 'leaderboard'>('overview');
@@ -46,6 +47,15 @@ export default function Dashboard() {
         {/* Gamification Stats */}
         <div className="mb-8">
           <GamificationPanel />
+        </div>
+
+        {/* Daily Mission */}
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold text-white mb-4 flex items-center">
+            <span className="mr-3">🎯</span>
+            Daily Micro-Mission
+          </h2>
+          <DailyMissionCard userPath="builder" />
         </div>
 
         {/* Gamification Tabs */}

@@ -27,6 +27,14 @@ interface ChecklistItem {
 export default function OnboardingPage() {
   const [checklist, setChecklist] = useState<ChecklistItem[]>([
     {
+      id: 'quiz',
+      title: 'Take Your Path Quiz',
+      description: 'Discover your learning path: Builder, Automator, or Deal-Maker',
+      href: '/onboarding/quiz',
+      icon: <Brain className="w-5 h-5" />,
+      completed: false
+    },
+    {
       id: 'profile',
       title: 'Complete Your Profile',
       description: 'Set up your dangerous thinker profile and preferences',
