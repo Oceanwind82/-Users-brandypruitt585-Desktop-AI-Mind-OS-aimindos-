@@ -33,6 +33,29 @@ export interface UserProfile {
   strengths: string[];
 }
 
+export interface ContentData {
+  title: string;
+  description: string;
+  content_type: string;
+  sections?: Array<{
+    title: string;
+    content: string;
+    estimated_time?: number;
+  }>;
+  learning_objectives?: string[];
+  difficulty_level?: number;
+  interactive_elements?: Record<string, unknown>;
+  metadata?: Record<string, unknown>;
+}
+
+export interface ContentImprovements {
+  structure_enhancements: string[];
+  interaction_additions: string[];
+  personalization_features: string[];
+  accessibility_improvements?: string[];
+  performance_optimizations?: string[];
+}
+
 export interface LessonRequest {
   topic: string;
   difficulty_level: number;
@@ -508,6 +531,349 @@ Format the response as a complete IntelligentLesson JSON object.`;
       risk_factors: ["Time constraints", "Complex topics ahead"],
       optimization_suggestions: ["Add more practice sessions", "Include peer collaboration"]
     };
+  }
+
+  /**
+   * Enhanced Content Intelligence Methods for API Integration
+   */
+
+  /**
+   * Generate context-aware content recommendations based on user behavior
+   */
+  static async generateContentRecommendations(params: {
+    user_profile: Partial<UserProfile>;
+    recent_topics: string[];
+    learning_goals: string[];
+    time_available: number; // minutes
+    current_context?: string;
+  }): Promise<{
+    recommended_content: Array<{
+      type: 'lesson' | 'assessment' | 'interactive_demo' | 'case_study';
+      topic: string;
+      priority_score: number;
+      estimated_time: number;
+      personalization_reasons: string[];
+    }>;
+    learning_path_suggestions: string[];
+    adaptive_difficulty: number;
+    context_insights: string[];
+  }> {
+    if (MOCK_AI_MODE) {
+      return {
+        recommended_content: [
+          {
+            type: 'lesson',
+            topic: 'Machine Learning Fundamentals',
+            priority_score: 0.92,
+            estimated_time: 25,
+            personalization_reasons: ['Matches your learning style', 'Builds on previous topics']
+          },
+          {
+            type: 'interactive_demo',
+            topic: 'Neural Networks in Practice',
+            priority_score: 0.87,
+            estimated_time: 30,
+            personalization_reasons: ['Interactive learning preference', 'Current skill level match']
+          }
+        ],
+        learning_path_suggestions: [
+          'Continue with ML fundamentals',
+          'Explore practical applications',
+          'Join study group discussions'
+        ],
+        adaptive_difficulty: 6,
+        context_insights: [
+          'User prefers visual learning',
+          'Strong performance in technical topics',
+          'Benefits from hands-on exercises'
+        ]
+      };
+    }
+
+    return retry(async () => {
+      const prompt = `Generate personalized content recommendations for this learner:
+
+User Profile: ${JSON.stringify(params.user_profile, null, 2)}
+Recent Topics: ${params.recent_topics.join(', ')}
+Learning Goals: ${params.learning_goals.join(', ')}
+Available Time: ${params.time_available} minutes
+Current Context: ${params.current_context || 'General learning session'}
+
+Provide recommendations in JSON format with content types, topics, priority scores, and personalization reasoning.`;
+
+      const completion = await openai.chat.completions.create({
+        model: "gpt-4-turbo-preview",
+        messages: [
+          {
+            role: "system",
+            content: `You are an AI content recommendation engine for AI Mind OS. Provide personalized, context-aware content suggestions that match the user's learning style, goals, and available time. Focus on adaptive difficulty and learning progression.`
+          },
+          {
+            role: "user",
+            content: prompt
+          }
+        ],
+        temperature: 0.6,
+        max_tokens: 2000,
+        response_format: { type: "json_object" }
+      });
+
+      return JSON.parse(completion.choices[0].message.content || '{}');
+    }, 3, 1000);
+  }
+
+  /**
+   * Generate intelligent content metadata for enhanced search and discovery
+   */
+  static async generateContentMetadata(content: {
+    title: string;
+    description: string;
+    content_type: string;
+    target_audience: string;
+  }): Promise<{
+    tags: string[];
+    difficulty_indicators: string[];
+    learning_objectives: string[];
+    prerequisite_topics: string[];
+    related_concepts: string[];
+    estimated_completion_time: number;
+    engagement_factors: string[];
+    accessibility_features: string[];
+  }> {
+    if (MOCK_AI_MODE) {
+      return {
+        tags: ['AI', 'Machine Learning', 'Beginner-Friendly', 'Interactive'],
+        difficulty_indicators: ['Basic concepts', 'No prior experience needed'],
+        learning_objectives: ['Understand core concepts', 'Apply basic techniques'],
+        prerequisite_topics: ['None required'],
+        related_concepts: ['Neural Networks', 'Data Science', 'Algorithms'],
+        estimated_completion_time: 30,
+        engagement_factors: ['Hands-on exercises', 'Visual examples', 'Real-world applications'],
+        accessibility_features: ['Screen reader compatible', 'Adjustable text size', 'Audio descriptions']
+      };
+    }
+
+    return retry(async () => {
+      const prompt = `Analyze this content and generate comprehensive metadata:
+
+Title: ${content.title}
+Description: ${content.description}
+Content Type: ${content.content_type}
+Target Audience: ${content.target_audience}
+
+Generate detailed metadata including tags, difficulty indicators, learning objectives, prerequisites, related concepts, estimated time, engagement factors, and accessibility features.`;
+
+      const completion = await openai.chat.completions.create({
+        model: "gpt-4-turbo-preview",
+        messages: [
+          {
+            role: "system",
+            content: `You are an AI content analysis engine. Generate comprehensive metadata for educational content that helps with discovery, personalization, and accessibility. Focus on accurate difficulty assessment and learning progression.`
+          },
+          {
+            role: "user",
+            content: prompt
+          }
+        ],
+        temperature: 0.4,
+        max_tokens: 1500,
+        response_format: { type: "json_object" }
+      });
+
+      return JSON.parse(completion.choices[0].message.content || '{}');
+    }, 3, 1000);
+  }
+
+  /**
+   * Predictive content optimization based on user engagement patterns
+   */
+  static async optimizeContentForEngagement(params: {
+    content_data: ContentData;
+    user_engagement_history: Array<{
+      content_type: string;
+      engagement_score: number;
+      completion_rate: number;
+      time_spent: number;
+      user_feedback?: string;
+    }>;
+    target_audience: string;
+    optimization_goals: string[];
+  }): Promise<{
+    optimization_suggestions: Array<{
+      area: string;
+      suggestion: string;
+      impact_score: number;
+      implementation_effort: 'low' | 'medium' | 'high';
+    }>;
+    predicted_engagement_score: number;
+    content_improvements: ContentImprovements;
+    a_b_test_suggestions: string[];
+  }> {
+    if (MOCK_AI_MODE) {
+      return {
+        optimization_suggestions: [
+          {
+            area: 'Interactivity',
+            suggestion: 'Add more hands-on coding exercises',
+            impact_score: 0.85,
+            implementation_effort: 'medium'
+          },
+          {
+            area: 'Visual Design',
+            suggestion: 'Include more diagrams and visual explanations',
+            impact_score: 0.78,
+            implementation_effort: 'low'
+          },
+          {
+            area: 'Pacing',
+            suggestion: 'Break content into smaller, digestible chunks',
+            impact_score: 0.82,
+            implementation_effort: 'medium'
+          }
+        ],
+        predicted_engagement_score: 0.87,
+        content_improvements: {
+          structure_enhancements: ['Add progress indicators', 'Include section summaries'],
+          interaction_additions: ['Quick knowledge checks', 'Interactive examples'],
+          personalization_features: ['Adaptive difficulty', 'Learning path suggestions']
+        },
+        a_b_test_suggestions: [
+          'Test different introduction lengths',
+          'Compare video vs text explanations',
+          'Experiment with quiz placement'
+        ]
+      };
+    }
+
+    return retry(async () => {
+      const prompt = `Analyze this content and user engagement data to suggest optimizations:
+
+Content Data: ${JSON.stringify(params.content_data, null, 2)}
+User Engagement History: ${JSON.stringify(params.user_engagement_history, null, 2)}
+Target Audience: ${params.target_audience}
+Optimization Goals: ${params.optimization_goals.join(', ')}
+
+Provide optimization suggestions with impact scores, predicted engagement improvements, and A/B testing recommendations.`;
+
+      const completion = await openai.chat.completions.create({
+        model: "gpt-4-turbo-preview",
+        messages: [
+          {
+            role: "system",
+            content: `You are an AI content optimization specialist. Analyze engagement patterns and suggest data-driven improvements to increase user engagement, completion rates, and learning outcomes. Provide actionable recommendations with impact assessments.`
+          },
+          {
+            role: "user",
+            content: prompt
+          }
+        ],
+        temperature: 0.5,
+        max_tokens: 2000,
+        response_format: { type: "json_object" }
+      });
+
+      return JSON.parse(completion.choices[0].message.content || '{}');
+    }, 3, 1000);
+  }
+
+  /**
+   * Generate adaptive content variations for different learning contexts
+   */
+  static async generateContentVariations(params: {
+    base_content: ContentData;
+    target_variations: Array<{
+      context: 'mobile' | 'desktop' | 'collaborative' | 'self-paced' | 'instructor-led';
+      duration_constraint?: number;
+      accessibility_requirements?: string[];
+    }>;
+    audience_segments: string[];
+  }): Promise<{
+    variations: Array<{
+      context: string;
+      adapted_content: ContentData;
+      optimization_applied: string[];
+      estimated_effectiveness: number;
+    }>;
+    cross_platform_recommendations: string[];
+    accessibility_enhancements: string[];
+  }> {
+    if (MOCK_AI_MODE) {
+      return {
+        variations: [
+          {
+            context: 'mobile',
+            adapted_content: {
+              title: 'Quick ML Concepts',
+              description: 'Mobile-optimized machine learning fundamentals',
+              content_type: 'interactive_lesson',
+              sections: [
+                { title: 'Bite-sized explanations', content: 'Core concepts in digestible chunks', estimated_time: 5 },
+                { title: 'Swipe-through examples', content: 'Interactive examples with touch controls', estimated_time: 7 },
+                { title: 'Touch interactions', content: 'Hands-on exercises for mobile', estimated_time: 3 }
+              ],
+              difficulty_level: 3
+            },
+            optimization_applied: ['Condensed content', 'Touch-friendly UI', 'Offline capability'],
+            estimated_effectiveness: 0.82
+          },
+          {
+            context: 'collaborative',
+            adapted_content: {
+              title: 'ML Team Workshop',
+              description: 'Collaborative machine learning session',
+              content_type: 'workshop',
+              sections: [
+                { title: 'Group discussions', content: 'Team-based concept exploration', estimated_time: 15 },
+                { title: 'Pair programming', content: 'Collaborative coding exercises', estimated_time: 20 },
+                { title: 'Shared whiteboard', content: 'Visual problem solving together', estimated_time: 10 }
+              ],
+              difficulty_level: 5
+            },
+            optimization_applied: ['Group activities', 'Discussion prompts', 'Collaborative tools'],
+            estimated_effectiveness: 0.89
+          }
+        ],
+        cross_platform_recommendations: [
+          'Sync progress across devices',
+          'Adaptive UI for different screen sizes',
+          'Context-aware content suggestions'
+        ],
+        accessibility_enhancements: [
+          'Screen reader optimization',
+          'Keyboard navigation support',
+          'High contrast mode options'
+        ]
+      };
+    }
+
+    return retry(async () => {
+      const prompt = `Generate adaptive content variations for different learning contexts:
+
+Base Content: ${JSON.stringify(params.base_content, null, 2)}
+Target Variations: ${JSON.stringify(params.target_variations, null, 2)}
+Audience Segments: ${params.audience_segments.join(', ')}
+
+Create optimized versions for each context while maintaining learning effectiveness and accessibility.`;
+
+      const completion = await openai.chat.completions.create({
+        model: "gpt-4-turbo-preview",
+        messages: [
+          {
+            role: "system",
+            content: `You are an adaptive content generation specialist. Create context-aware variations of educational content that optimize for different devices, learning environments, and accessibility needs while maintaining pedagogical effectiveness.`
+          },
+          {
+            role: "user",
+            content: prompt
+          }
+        ],
+        temperature: 0.6,
+        max_tokens: 2500,
+        response_format: { type: "json_object" }
+      });
+
+      return JSON.parse(completion.choices[0].message.content || '{}');
+    }, 3, 1000);
   }
 }
 

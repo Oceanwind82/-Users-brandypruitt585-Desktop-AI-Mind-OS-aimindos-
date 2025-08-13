@@ -171,3 +171,6 @@ export default function Home() {
     </main>
   );
 }
+<div className="bg-brand-500 text-white p-4 rounded-2xl shadow-soft">
+  Tailwind is working!
+</div>
