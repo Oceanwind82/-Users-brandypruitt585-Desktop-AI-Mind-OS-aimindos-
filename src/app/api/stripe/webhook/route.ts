@@ -31,7 +31,7 @@ export async function POST(req: Request) {
 
     await notify(`💰 [MOCK] Checkout Completed\n` +
       `👤 mock@user.com\n` +
-      `💵 $29.00\n` +
+      `💵 $59.99\n` +
       `📊 Mock subscription activated`);
 
     return NextResponse.json({ 

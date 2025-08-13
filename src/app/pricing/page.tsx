@@ -47,7 +47,7 @@ export default function Pricing() {
     {
       id: 'thinker',
       name: "Thinker",
-      price: "$9",
+      price: "$29.99",
       period: "/month",
       description: "For serious thinkers ready to level up",
       icon: <Star className="w-6 h-6" />,
@@ -70,7 +70,7 @@ export default function Pricing() {
     {
       id: 'dangerous',
       name: "Dangerous Thinker",
-      price: "$29",
+      price: "$59.99",
       period: "/month",
       popular: true,
       description: "The complete toolkit for breakthrough thinking",
@@ -95,7 +95,7 @@ export default function Pricing() {
     {
       id: 'master',
       name: "Mind Master",
-      price: "$99",
+      price: "$99.99",
       period: "/month",
       description: "Enterprise-grade platform for organizations",
       icon: <Crown className="w-6 h-6" />,

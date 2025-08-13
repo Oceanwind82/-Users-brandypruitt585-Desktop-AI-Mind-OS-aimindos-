@@ -66,7 +66,7 @@ export default function BillingPage() {
                 <div className="flex items-center gap-6 text-sm text-gray-400">
                   <div className="flex items-center gap-2">
                     <DollarSign className="w-4 h-4" />
-                    <span>$29/month</span>
+                    <span>$59.99/month</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Calendar className="w-4 h-4" />

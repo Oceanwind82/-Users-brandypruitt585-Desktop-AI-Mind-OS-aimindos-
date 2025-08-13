@@ -40,7 +40,7 @@ export default function AIAssistantPage() {
             fontSize: '14px',
             border: '1px solid rgba(255,255,255,0.3)'
           }}>
-            ⭐ Exclusive to Mind Master ($99/month) subscribers
+            ⭐ Exclusive to Mind Master ($99.99/month) subscribers
           </div>
         </div>
 
