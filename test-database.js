@@ -21,7 +21,7 @@ async function testDatabaseConnection() {
   try {
     // Test basic connection
     console.log('1. Testing basic connection...');
-    const { data: healthCheck } = await supabase.from('profiles').select('count').limit(1);
+    await supabase.from('profiles').select('count').limit(1);
     console.log('✅ Connection successful\n');
 
     // Test each table
@@ -59,7 +59,7 @@ async function testDatabaseConnection() {
     // Test database functions
     console.log('\n4. Testing database functions...');
     try {
-      const { data, error } = await supabase.rpc('update_user_xp', { 
+      const { error } = await supabase.rpc('update_user_xp', { 
         user_uuid: '00000000-0000-0000-0000-000000000000', 
         xp_amount: 0 
       });
@@ -69,7 +69,7 @@ async function testDatabaseConnection() {
         console.log('✅ Database functions available');
       }
     } catch (err) {
-      console.log('⚠️  Database functions may need setup');
+      console.log(`⚠️  Database functions may need setup - ${err.message}`);
     }
 
     console.log('\n🎉 Database Test Complete!\n');

@@ -69,7 +69,7 @@ async function testAIAssistant() {
 
         if (ai.insights) {
           console.log(`\n💡 Insights:`);
-          ai.insights.forEach((insight, i) => {
+          ai.insights.forEach((insight) => {
             console.log(`  • ${insight}`);
           });
         }

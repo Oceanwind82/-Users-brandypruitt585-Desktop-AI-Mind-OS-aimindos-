@@ -161,17 +161,7 @@ export default function WorkbenchWhiteboard() {
     }
   };
 
-  const connectItems = (item1Id: string, item2Id: string) => {
-    setItems(prev => prev.map(item => {
-      if (item.id === item1Id) {
-        return { ...item, connections: [...(item.connections || []), item2Id] };
-      }
-      if (item.id === item2Id) {
-        return { ...item, connections: [...(item.connections || []), item1Id] };
-      }
-      return item;
-    }));
-  };
+  // Removed unused connectItems function
 
   const addSticky = () => {
     const id = crypto.randomUUID();

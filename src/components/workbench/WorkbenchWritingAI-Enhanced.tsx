@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Send, Copy, Download, Sparkles, RefreshCw, Zap, ArrowRight } from 'lucide-react';
-import { useAIContext, useCrossToolAssets } from '@/lib/ai-context';
+import { useAIContext, useContextualPrompting, useCrossToolAssets } from '@/lib/ai-context';
 import { buildEnhancedPrompt } from '@/lib/ai-prompts';
 
 const templates: { name: string; prompt: string; category: string }[] = [
@@ -30,6 +30,7 @@ export default function WorkbenchWritingAI() {
 
   // Enhanced AI context integration
   const { context, addActivity, addAsset } = useAIContext();
+  useContextualPrompting();
   const { relevantAssets, transferAsset } = useCrossToolAssets('writing');
 
   const generateText = async () => {

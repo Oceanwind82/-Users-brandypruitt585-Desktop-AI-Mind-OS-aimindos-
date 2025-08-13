@@ -12,7 +12,7 @@ export async function runDatabaseMigration() {
   try {
     // Test connection first
     console.log('1. Testing database connection...');
-    const { data, error } = await supabase.from('auth.users').select('count').limit(1);
+    const { error } = await supabase.from('auth.users').select('count').limit(1);
     if (error && !error.message.includes('permission denied')) {
       throw new Error(`Connection failed: ${error.message}`);
     }
@@ -260,7 +260,7 @@ async function executeSQL(sql, description) {
     } else {
       console.log(`✅ ${description} created`);
     }
-  } catch (err) {
+  } catch {
     console.log(`⚠️  ${description} - Execute manually in Supabase Dashboard`);
   }
 }

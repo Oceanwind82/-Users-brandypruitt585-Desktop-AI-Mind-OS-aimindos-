@@ -1,4 +1,4 @@
-import AIAssistantChat from '@/components/AIAssistantChat';
+import AIAssistantChat from '../../components/AIAssistantChat';
 import Link from 'next/link';
 
 export default function AIAssistantPage() {

@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+import fs from 'fs';
+
 /**
  * AI Mind OS - Environment & System Test
  * Verifies all components are ready for success
@@ -49,9 +51,7 @@ function checkEnvironment() {
 // Check file structure
 function checkFileStructure() {
   console.log('\n📁 FILE STRUCTURE CHECK');
-  console.log('='.repeat(50));
-  
-  const fs = require('fs');
+  // 'fs' is now imported at the top of the file
   
   const criticalFiles = [
     { path: 'src/app/api/lessons/complete/route.ts', purpose: 'Lesson completion API' },
@@ -74,7 +74,7 @@ function checkFileStructure() {
         console.log(`❌ ${file.path} - ${file.purpose} (MISSING)`);
       }
     });
-  } catch (error) {
+  } catch {
     console.log('⚠️ File system check failed - assuming files exist');
     filesFound = criticalFiles.length;
   }
