@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "NODE_OPTIONS='--disable-warning=ExperimentalWarning --disable-warning=DEP0040' next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "NODE_OPTIONS='--disable-warning=ExperimentalWarning --disable-warning=DEP0040' next start",
     "lint": "next lint"
   },
   "dependencies": {
