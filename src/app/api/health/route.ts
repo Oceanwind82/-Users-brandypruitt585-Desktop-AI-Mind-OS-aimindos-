@@ -26,20 +26,6 @@ export async function GET() {
 
   const r = await check(URL, TIMEOUT);
 
-  // Gather system info
-  const os = await import('os');
-  const payload = {
-    ok: r.ok,
-    timestamp: new Date().toISOString(),
-    platform: os.platform(),
-    uptimeSeconds: process.uptime(),
-    nodeVersion: process.version,
-    // Optionally include health check details
-    status: r.status,
-    responseMs: r.ms,
-    error: r.err || null
-  };
-
   if (!r.ok || r.ms > MAX_MS) {
     await sendTelegram({
       text:
@@ -49,10 +35,10 @@ export async function GET() {
         `*Status:* ${r.status}\n` +
         `*Response:* ${r.ms} ms\n` +
         (r.err ? `*Error:* ${r.err}\n` : "") +
-        `*Checked:* ${payload.timestamp}`,
+        `*Checked:* ${new Date().toISOString()}`,
       parseMode: "Markdown"
     });
   }
 
-  return NextResponse.json(payload);
+  return NextResponse.json(r);
 }
