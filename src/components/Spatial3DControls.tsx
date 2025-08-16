@@ -13,6 +13,58 @@ import {
   Camera
 } from 'lucide-react';
 
+const cameraModes = [
+  {
+    key: 'orbit',
+    label: 'Orbit',
+    icon: <Camera className="h-5 w-5" />
+  },
+  {
+    key: 'fly',
+    label: 'Fly',
+    icon: <Move3D className="h-5 w-5" />
+  },
+  {
+    key: 'fixed',
+    label: 'Fixed',
+    icon: <Eye className="h-5 w-5" />
+  }
+];
+
+// Example environment presets
+const environmentPresets = [
+  {
+    key: 'studio',
+    label: 'Studio',
+    icon: '🎬',
+    color: 'bg-blue-600'
+  },
+  {
+    key: 'forest',
+    label: 'Forest',
+    icon: '🌲',
+    color: 'bg-green-600'
+  },
+  {
+    key: 'desert',
+    label: 'Desert',
+    icon: '🏜️',
+    color: 'bg-yellow-600'
+  },
+  {
+    key: 'space',
+    label: 'Space',
+    icon: '🌌',
+    color: 'bg-purple-600'
+  },
+  {
+    key: 'ocean',
+    label: 'Ocean',
+    icon: '🌊',
+    color: 'bg-teal-600'
+  }
+];
+
 export default function Spatial3DControls() {
   const {
     mode,
@@ -25,7 +77,6 @@ export default function Spatial3DControls() {
     loadPreset,
     activePanel
   } = useSpatial3D();
-  
   const { currentTheme } = useSensory();
   const { onClick, onHover } = useAudioFeedback();
   const [isExpanded, setIsExpanded] = useState(false);
@@ -38,29 +89,18 @@ export default function Spatial3DControls() {
     }
   };
 
-  const environmentPresets = [
-    { key: 'minimal', label: 'Minimal', icon: '⚪', color: 'bg-gray-500' },
-    { key: 'cyberpunk', label: 'Cyberpunk', icon: '🌃', color: 'bg-purple-500' },
-    { key: 'paper', label: 'Paper', icon: '📄', color: 'bg-yellow-500' },
-    { key: 'nature', label: 'Nature', icon: '🌿', color: 'bg-green-500' },
-    { key: 'space', label: 'Space', icon: '🚀', color: 'bg-blue-500' }
-  ];
-
-  const cameraModes = [
-    { key: 'orbit', label: 'Orbit', icon: <Move3D className="h-4 w-4" /> },
-    { key: 'fly', label: 'Fly', icon: <Camera className="h-4 w-4" /> },
-    { key: 'fixed', label: 'Fixed', icon: <Eye className="h-4 w-4" /> }
-  ];
-
   return (
     <>
-      {/* Main Toggle Button */}
-      <div className="fixed bottom-6 left-6 z-50">
+      <div 
+        className={`fixed bottom-20 left-6 w-80 bg-black/20 backdrop-blur-xl border border-white/10 rounded-xl p-6 z-40 opacity-80 ${getAnimationClass()}`}
+        style={{ 
+          background: currentTheme.ui.glassmorphism 
+            ? 'rgba(0,0,0,0.2)' 
+            : currentTheme.ui.background 
+        }}
+      >
         <button
-          onClick={() => {
-            setIsExpanded(!isExpanded);
-            onClick();
-          }}
+          onClick={() => setIsExpanded(!isExpanded)}
           onMouseEnter={onHover}
           className={`relative bg-gradient-to-r ${
             mode.is3D 

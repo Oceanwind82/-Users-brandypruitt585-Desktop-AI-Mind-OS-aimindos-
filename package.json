@@ -6,11 +6,17 @@
     "dev": "NODE_OPTIONS='--disable-warning=ExperimentalWarning --disable-warning=DEP0040' next dev",
     "build": "next build",
     "start": "NODE_OPTIONS='--disable-warning=ExperimentalWarning --disable-warning=DEP0040' next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "smoke": "bash scripts/smoke.sh",
+    "sanity:dev": "sanity dev",
+    "sanity:build": "sanity build",
+    "deploy": "vercel --prod"
   },
   "dependencies": {
     "@react-three/drei": "^10.6.1",
     "@react-three/fiber": "^9.3.0",
+    "@sanity/image-url": "^1.1.0",
+    "@sanity/vision": "^4.4.0",
     "@stripe/stripe-js": "^7.8.0",
     "@supabase/ssr": "^0.6.1",
     "@supabase/supabase-js": "^2.54.0",
@@ -21,11 +27,14 @@
     "html-to-image": "^1.11.13",
     "lucide-react": "^0.539.0",
     "next": "15.4.6",
+    "next-sanity": "^10.0.10",
     "node-html-parser": "^7.0.1",
     "openai": "^5.12.2",
     "react": "19.1.0",
     "react-dom": "19.1.0",
+    "sanity": "^4.4.0",
     "stripe": "^18.4.0",
+    "styled-components": "^6.1.19",
     "three": "^0.179.1",
     "tldraw": "^3.15.1",
     "zod": "^3.25.76"

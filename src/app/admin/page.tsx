@@ -1,209 +1,192 @@
-"use client";
 
-import { useEffect, useState } from "react";
+'use client';
 
-type Health = {
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+
+type CheckResult = {
   ok: boolean;
-  timestamp?: string;
-  platform?: string;
-  uptimeSeconds?: number;
-  nodeVersion?: string;
-  error?: string;
+  service: string;
+  latencyMs?: number;
+  [k: string]: unknown;
 };
 
-type Service = "db" | "stripe" | "telegram" | "sanity";
+const services = [
+  { key: 'core', path: '/api/health' },
+  { key: 'supabase', path: '/api/health/db' },
+  { key: 'stripe', path: '/api/health/stripe' },
+  { key: 'sanity', path: '/api/health/sanity' },
+  { key: 'telegram', path: '/api/health/telegram' },
+];
 
-const services: Service[] = ["db", "stripe", "telegram", "sanity"];
+function Badge({ ok }: { ok: boolean }) {
+  return (
+    <span
+      className={`rounded-full px-2 py-0.5 text-xs ${
+        ok ? 'bg-green-600/20 text-green-300' : 'bg-red-600/20 text-red-300'
+      }`}
+    >
+      {ok ? 'OK' : 'FAIL'}
+    </span>
+  );
+}
 
-export default function AdminPage() {
-  const [health, setHealth] = useState<Health | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [checks, setChecks] = useState<Record<Service, Health | null>>({
-    db: null,
-    stripe: null,
-    telegram: null,
-    sanity: null,
-  });
-  const [lastChecked, setLastChecked] = useState<Record<Service, string>>({
-    db: "",
-    stripe: "",
-    telegram: "",
-    sanity: "",
-  });
-  const [expanded, setExpanded] = useState<Record<Service, boolean>>({
-    db: false,
-    stripe: false,
-    telegram: false,
-    sanity: false,
-  });
-  const [pending, setPending] = useState<Record<Service, boolean>>({
-    db: true,
-    stripe: true,
-    telegram: true,
-    sanity: true,
-  });
+function Card({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
+      <h2 className="text-lg font-semibold mb-3">{title}</h2>
+      {children}
+    </div>
+  );
+}
 
-  const fetchCheck = async (service: Service) => {
-    setPending((prev) => ({ ...prev, [service]: true }));
+export default function Admin() {
+  const [results, setResults] = useState<Record<string, CheckResult>>({});
+  const [loading, setLoading] = useState(false);
+  const [auto, setAuto] = useState(true);
+  const timer = useRef<NodeJS.Timeout | null>(null);
+
+  const appName = process.env.NEXT_PUBLIC_APP_NAME || 'Admin';
+
+  const envKeys = useMemo(
+    () =>
+      [
+        'NEXT_PUBLIC_APP_NAME',
+        'NEXT_PUBLIC_SUPABASE_URL',
+        'NEXT_PUBLIC_SUPABASE_ANON_KEY',
+        'SUPABASE_SERVICE_ROLE_KEY',
+        'STRIPE_SECRET_KEY',
+        'SANITY_API_TOKEN',
+        'SANITY_PROJECT_ID',
+        'SANITY_DATASET',
+        'TELEGRAM_BOT_TOKEN',
+        'TELEGRAM_CHAT_ID',
+        'OPENAI_API_KEY',
+      ].filter(Boolean),
+    []
+  );
+
+  const runChecks = useCallback(async () => {
+    setLoading(true);
     try {
-      const res = await fetch(`/api/health/${service}`);
-      const data = await res.json();
-      setChecks((prev) => ({ ...prev, [service]: data }));
-      setLastChecked((prev) => ({ ...prev, [service]: new Date().toLocaleTimeString() }));
-    } catch {
-      setChecks((prev) => ({ ...prev, [service]: null }));
-      setLastChecked((prev) => ({ ...prev, [service]: new Date().toLocaleTimeString() }));
+      const pairs = await Promise.all(
+        services.map(async (s) => {
+          try {
+            const r = await fetch(s.path, { cache: 'no-store' });
+            const json = await r.json();
+            return [s.key, { ...json, service: s.key } as CheckResult] as const;
+          } catch {
+            return [
+              s.key,
+              { ok: false, service: s.key, error: 'fetch failed' } as CheckResult,
+            ] as const;
+          }
+        })
+      );
+      setResults(Object.fromEntries(pairs));
     } finally {
-      setPending((prev) => ({ ...prev, [service]: false }));
+      setLoading(false);
     }
-  };
-
-  useEffect(() => {
-    const load = async () => {
-      try {
-        const res = await fetch("/api/health", { cache: "no-store" });
-        const data = await res.json();
-        setHealth(data);
-      } catch {
-        setHealth(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-    load();
-
-    services.forEach((service) => {
-      fetchCheck(service);
-    });
   }, []);
 
-  // Summary status
-  const allPass = services.every((service) => checks[service]?.ok);
-  const anyFail = services.some((service) => checks[service] && !checks[service]?.ok);
+  useEffect(() => {
+    runChecks();
+  }, [runChecks]);
+
+  useEffect(() => {
+    if (!auto) {
+      if (timer.current) clearInterval(timer.current);
+      return;
+    }
+    timer.current = setInterval(runChecks, 10_000);
+    return () => {
+      if (timer.current) clearInterval(timer.current);
+    };
+  }, [auto, runChecks]);
+
+  const overallOK = Object.values(results).every((r) => r?.ok !== false);
 
   return (
     <main className="min-h-screen bg-black text-white">
       <div className="mx-auto max-w-6xl px-6 py-10">
-        <header className="mb-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <header className="mb-8 flex items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold">AI Mind OS — Admin</h1>
-            <div className="text-sm opacity-80">
-              {health?.timestamp ? (
-                <>Server time: {new Date(health.timestamp).toLocaleString()}</>
-              ) : (
-                <>Server time: —</>
-              )}
-            </div>
+            <h1 className="text-2xl md:text-3xl font-bold">
+              {appName} — Admin
+            </h1>
+            <p className="text-sm opacity-70">
+              Overall status:{' '}
+              <Badge ok={overallOK || Object.keys(results).length === 0} />
+            </p>
           </div>
-          <div className="flex flex-col items-end gap-2">
-            <span className={allPass ? "text-green-400" : anyFail ? "text-red-400" : "text-yellow-400"}>
-              {allPass
-                ? "All systems operational"
-                : anyFail
-                ? "Issues detected"
-                : "Checking..."}
-            </span>
+          <div className="flex items-center gap-2">
             <button
-              onClick={() => location.reload()}
-              className="rounded-xl border border-white/10 bg-white/10 px-3 py-2 text-sm hover:bg-white/20"
+              onClick={runChecks}
+              disabled={loading}
+              className="rounded-xl border border-white/10 bg-white/10 px-3 py-2 text-sm hover:bg-white/20 disabled:opacity-50"
             >
-              Refresh All
+              {loading ? 'Running…' : 'Run all checks'}
             </button>
+            <label className="text-sm flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={auto}
+                onChange={(e) => setAuto(e.target.checked)}
+              />
+              Auto-refresh (10s)
+            </label>
           </div>
         </header>
 
         <section className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {/* Health Card */}
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
-            <h2 className="text-lg font-semibold mb-3">Server Health</h2>
-            {loading && <p>Checking…</p>}
-            {!loading && !health && (
-              <p className="text-red-400">Health check failed.</p>
-            )}
-            {!loading && health && (
-              <ul className="space-y-1 text-sm">
-                <li>
-                  Status:{" "}
-                  <span className={health.ok ? "text-green-400" : "text-red-400"}>
-                    {health.ok ? "OK" : "Issue"}
-                  </span>
-                </li>
-                <li>Platform: {health.platform}</li>
-                <li>Node: {health.nodeVersion}</li>
-                <li>Uptime: {Math.floor(health.uptimeSeconds ?? 0)}s</li>
-              </ul>
-            )}
-          </div>
-
-          {/* System Checks */}
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
-            <h2 className="text-lg font-semibold mb-3">System Checks</h2>
-            <ul className="space-y-2 text-sm">
-              {services.map((service) => (
-                <li key={service} className="flex flex-col gap-1">
-                  <div className="flex items-center gap-2">
-                    <span className="font-semibold">
-                      {service.charAt(0).toUpperCase() + service.slice(1)}:
-                    </span>
-                    {pending[service] ? (
-                      <span className="animate-pulse text-yellow-300">Loading…</span>
-                    ) : checks[service] ? (
-                      <>
-                        <span className={checks[service]?.ok ? "text-green-400" : "text-red-400"}>
-                          {checks[service]?.ok ? "Pass" : "Fail"}
-                        </span>
-                        <span className="text-xs opacity-70 ml-2">Last checked: {lastChecked[service]}</span>
-                        <button
-                          className="ml-2 px-2 py-1 rounded bg-white/10 border border-white/10 text-xs hover:bg-white/20"
-                          onClick={() => fetchCheck(service)}
-                        >
-                          Retry
-                        </button>
-                        {!checks[service]?.ok && checks[service]?.error && (
-                          <>
-                            <button
-                              className="ml-2 px-2 py-1 rounded bg-red-900/30 border border-red-400 text-xs text-red-200 hover:bg-red-900/50"
-                              onClick={() => setExpanded((prev) => ({ ...prev, [service]: !prev[service] }))}
-                            >
-                              {expanded[service] ? "Hide Error" : "Show Error"}
-                            </button>
-                            {expanded[service] && (
-                              <div className="mt-1 p-2 rounded bg-red-900/20 text-red-200 text-xs border border-red-400">
-                                {checks[service]?.error}
-                              </div>
-                            )}
-                          </>
-                        )}
-                      </>
-                    ) : (
-                      <span className="opacity-80">pending</span>
+          {services.map((s) => {
+            const res = results[s.key];
+            return (
+              <Card key={s.key} title={`Service: ${s.key}`}>
+                {!res ? (
+                  <p className="opacity-70">Waiting…</p>
+                ) : (
+                  <div className="space-y-2 text-sm">
+                    <div className="flex items-center gap-2">
+                      <Badge ok={!!res.ok} />
+                      <span className="opacity-80">
+                        {res.ok ? 'Healthy' : 'Issue'}
+                      </span>
+                    </div>
+                    {'latencyMs' in res && (
+                      <div>Latency: {res.latencyMs} ms</div>
                     )}
+                    {'platform' in res && <div>Platform: {String(res.platform)}</div>}
+                    {'nodeVersion' in res && (
+                      <div>Node: {String(res.nodeVersion)}</div>
+                    )}
+                    {'detail' in res && <div>Detail: {String(res.detail)}</div>}
+                    {'error' in res && (
+                      <div className="text-red-400">Error: {String(res.error)}</div>
+                    )}
+                    <a
+                      className="underline opacity-80 hover:opacity-100"
+                      href={s.path}
+                      target="_blank"
+                    >
+                      View raw
+                    </a>
                   </div>
-                </li>
-              ))}
-            </ul>
-            <p className="mt-3 text-xs opacity-70">
-              Each check is wired to <code>/api/health/[service]</code> endpoints.
-            </p>
-          </div>
+                )}
+              </Card>
+            );
+          })}
 
-          {/* Quick Links */}
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
-            <h2 className="text-lg font-semibold mb-3">Quick Links</h2>
+          <Card title="Quick Links">
             <ul className="space-y-2 text-sm">
-              <li>
-                <a className="underline hover:opacity-80" href="/health" target="_blank">
-                  Public Health Page (optional if you add one)
-                </a>
-              </li>
               <li>
                 <a className="underline hover:opacity-80" href="/api/health" target="_blank">
-                  API Health JSON
-                </a>
-              </li>
-              <li>
-                <a className="underline hover:opacity-80" href="/api" target="_blank">
-                  API Root (if any)
+                  Core Health JSON
                 </a>
               </li>
               <li>
@@ -222,12 +205,22 @@ export default function AdminPage() {
                 </a>
               </li>
             </ul>
-          </div>
+          </Card>
+
+          <Card title="Environment (names only)">
+            <ul className="space-y-1 text-xs opacity-80">
+              {envKeys.map((k) => (
+                <li key={k}>✓ {k} set? {process.env[k] ? 'yes' : 'no'}</li>
+              ))}
+            </ul>
+            <p className="mt-3 text-[11px] opacity-60">
+              Values are never shown. Add/rotate in Vercel → Project → Settings.
+            </p>
+          </Card>
         </section>
 
-        {/* Footer */}
         <footer className="mt-10 text-xs opacity-60">
-          Admin-only area. Keep credentials in environment variables.
+          Admin-only area. Credentials via env. Consider upgrading to SSO later.
         </footer>
       </div>
     </main>
